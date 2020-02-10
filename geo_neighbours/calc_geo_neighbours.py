@@ -20,13 +20,15 @@ class GeoNeighbours:
     def fillList(self, points_list):
         hash_list = points_list
         for hashes in hash_list:
-            geohash = geoHash(hashes.latitude, hashes.longitude)
+            geohash = geoHash(hashes.get("latitude"), hashes.get("longitude"))
             want = geohash[:5]
             if want not in self.prefix_points_mapper:
                 self.prefix_points_mapper[want] = []
-                self.prefix_points_mapper[want].append([hashes.latitude, hashes.longitude, hashes.full_address])
+                self.prefix_points_mapper[want].append(
+                    [hashes.get("latitude"), hashes.get("longitude"), hashes.get("full_address")])
             else:
-                self.prefix_points_mapper[want].append([hashes.latitude, hashes.longitude, hashes.full_address])
+                self.prefix_points_mapper[want].append(
+                    [hashes.get("latitude"), hashes.get("longitude"), hashes.get("full_address")])
 
     def getNearbyStores(self, latitude, longitude):
         geohash = geoHash(latitude, longitude)
@@ -76,11 +78,7 @@ class GeoNeighbours:
             changed_geo_hash = changed_geo_hash + neighbours_list[cell][geo_hash_by_changing_2nd_last_char][0]
             if changed_geo_hash in self.prefix_points_mapper:
                 for geo_hash_by_changing_last_char in range(0, len(self.prefix_points_mapper[changed_geo_hash])):
-                    start = (latitude, longitude)
-                    end = (float(self.prefix_points_mapper[changed_geo_hash][geo_hash_by_changing_last_char][0]),
-                           float(self.prefix_points_mapper[changed_geo_hash][geo_hash_by_changing_last_char][1]))
-                    dis = haversine(start, end)
-                    nearest_stores.append([dis, str(self.prefix_points_mapper[changed_geo_hash]
+                    nearest_stores.append([str(self.prefix_points_mapper[changed_geo_hash]
                                                     [geo_hash_by_changing_last_char][2]),
                                            float(self.prefix_points_mapper[changed_geo_hash][
                                                      geo_hash_by_changing_last_char][0]),
